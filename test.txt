@@ -1,0 +1,4 @@
+hello.java:3: error: package Sysem does not exist
+        Sysem.out.print("Hello");
+             ^
+1 error
