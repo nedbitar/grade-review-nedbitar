@@ -1,4 +1,4 @@
-CPATH='.;../lib/hamcrest-core-1.3.jar;../lib/junit-4.13.2.jar'
+CPATH='.:../lib/hamcrest-core-1.3.jar:../lib/junit-4.13.2.jar'
 
 rm -rf student-submission
 git clone $1 student-submission
@@ -25,11 +25,12 @@ if [[ $? -eq 0 ]]
         exit 1
 fi
 java -cp $CPATH org.junit.runner.JUnitCore TestListExamples > results.txt
-egrep -w "Tests" results.txt > failsPasses.txt
-if [[ -s failsPasses.txt ]]
+fails=$(egrep -o "Failures: [0-9]+" results.txt | egrep -o "[0-9]+")
+total=$(egrep -o "Tests run: [0-9]+" results.txt | egrep -o "[0-9]+")
+if [[ $total -ne 0 ]]
     then
-        echo "You failure! Here: "
-        cat failsPasses.txt
+        percentage=$(echo "scale=2;($total - $fails) / $total * 100" | bc)
+        echo "Pass Percentage: $percentage%"
     else
-        echo "All tests passed! 100%"
-fi 
+        echo "All tests failed"
+fi
